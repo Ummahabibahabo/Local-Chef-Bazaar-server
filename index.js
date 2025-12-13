@@ -29,6 +29,7 @@ async function run() {
 
     const DailyFoodsCollection = db.collection("dailymeals");
     const HomeReviewCollection = db.collection("home-review");
+    const MealsPageCollection = db.collection("meals");
     // Post for Daily meals Section
     app.post("/dailymeals", async (req, res) => {
       const newDailyMeals = req.body;
@@ -55,6 +56,21 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
+    // post for mealsPage section
+    app.post("/meals", async (req, res) => {
+      const newMeals = req.body;
+      const result = await MealsPageCollection.insertOne(newMeals);
+      res.send(result);
+    });
+    // get for mealsPage section
+    app.get("/meals", async (req, res) => {
+      const cursor = MealsPageCollection.find().sort({
+        price: -1,
+      });
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
