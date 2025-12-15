@@ -163,6 +163,7 @@ async function run() {
     const HomeReviewCollection = db.collection("home-review");
     const MealsPageCollection = db.collection("meals");
     const reviewCollection = db.collection("review");
+    const favoritesCollection = db.collection("favorites");
 
     // Daily Meals
 
@@ -250,6 +251,22 @@ async function run() {
         { _id: new ObjectId(id) },
         { $set: updateData }
       );
+      res.send(result);
+    });
+    // add favorite
+    app.post("/favorites", async (req, res) => {
+      const favorite = req.body;
+
+      const exist = await favoritesCollection.findOne({
+        userEmail: favorite.userEmail,
+        mealId: favorite.mealId,
+      });
+
+      if (exist) {
+        return res.send({ alreadyAdded: true });
+      }
+
+      const result = await favoritesCollection.insertOne(favorite);
       res.send(result);
     });
 
