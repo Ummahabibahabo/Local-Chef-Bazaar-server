@@ -142,6 +142,23 @@ async function run() {
       const result = await favoritesCollection.insertOne(favorite);
       res.send(result);
     });
+    // Get favorites for a user
+    app.get("/favorites", async (req, res) => {
+      const userEmail = req.query.userEmail;
+      const favorites = await favoritesCollection
+        .find({ userEmail })
+        .sort({ addedTime: -1 })
+        .toArray();
+      res.send(favorites);
+    });
+    // Delete a favorite meal
+    app.delete("/favorites/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await favoritesCollection.deleteOne({
+        _id: new ObjectId(id),
+      });
+      res.send(result);
+    });
     // Create a new order
     app.post("/orders", async (req, res) => {
       const order = req.body;
